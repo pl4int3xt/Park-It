@@ -4,8 +4,9 @@ import com.example.domain.model.ParkingSpot
 import com.example.domain.repository.ParkingSpotRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class ParkingSpotRepositoryImpl(
+class ParkingSpotRepositoryImpl @Inject constructor(
     private val dao: ParkingSpotDao
 ): ParkingSpotRepository {
     override suspend fun insertParkingSpot(spot: ParkingSpot) {
