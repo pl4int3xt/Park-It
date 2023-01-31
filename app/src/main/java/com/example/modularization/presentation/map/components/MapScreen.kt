@@ -27,9 +27,11 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -40,6 +42,8 @@ fun MapScreen(
     val locationPermissionState =  rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION
     )
+
+    val cameraPositionState = rememberCameraPositionState()
 
 //    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -92,6 +96,9 @@ fun MapScreen(
         }
     ) {
         GoogleMap(
+            cameraPositionState = CameraPositionState(
+                cameraPositionState.position
+            ),
             properties = viewModel.state.properties,
             uiSettings = mapUiSettings,
             onMapLongClick = {
