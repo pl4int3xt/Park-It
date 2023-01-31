@@ -33,7 +33,7 @@ fun MapScreen(
         GoogleMap(
             properties = viewModel.state.properties,
             uiSettings = mapUiSettings,
-            onMapLongClick = {}
+            onMapLongClick = {},
         )
     }
 }
