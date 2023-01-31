@@ -78,7 +78,7 @@ fun MapScreen(
         }
     })
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(true){
         if (state.lastKnownLocation != null){
             cameraPositionState.animate(
                 update = CameraUpdateFactory.newLatLngZoom(
