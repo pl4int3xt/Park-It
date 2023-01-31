@@ -81,11 +81,12 @@ fun MapScreen(
     LaunchedEffect(Unit){
         if (state.lastKnownLocation != null){
             cameraPositionState.animate(
-                update = CameraUpdateFactory.newLatLng(
-                    LatLng(
+                update = CameraUpdateFactory.newLatLngZoom(
+                     LatLng(
                         viewModel.state.lastKnownLocation?.latitude ?: viewModel.state.parkingSpots.last().lat,
                         viewModel.state.lastKnownLocation?.longitude ?: viewModel.state.parkingSpots.last().lat
-                    )
+                    ),
+                    8000000F
                 )
             )
         }
