@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -25,10 +26,13 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -37,31 +41,55 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MapScreen(
-    viewModel: MapScreenViewModel = hiltViewModel()
+    viewModel: MapScreenViewModel = hiltViewModel(),
+    fusedLocationProviderClient: FusedLocationProviderClient
 ) {
+    val state = viewModel.state
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val mapUiSettings = remember{ MapUiSettings(zoomControlsEnabled = false) }
+    val cameraPositionState = rememberCameraPositionState()
     val locationPermissionState =  rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION
     )
 
-    val cameraPositionState = rememberCameraPositionState()
 
-//    val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
+    DisposableEffect(key1 = lifecycleOwner, effect = {
+        val observer = LifecycleEventObserver{ _, event ->
+            if (event == Lifecycle.Event.ON_START){
+                locationPermissionState.launchPermissionRequest()
+                if (locationPermissionState.status.isGranted){
+                    viewModel.getDeviceLocation(fusedLocationProviderClient = fusedLocationProviderClient)
+                } else if (locationPermissionState.status.shouldShowRationale){
+                    locationPermissionState.launchPermissionRequest()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Denied completely",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
 
-//    DisposableEffect(key1 = lifecycleOwner, effect = {
-//        val observer = LifecycleEventObserver{ _, event ->
-//            if (event == Lifecycle.Event.ON_START){
-//                locationPermissionState.launchPermissionRequest()
-//            }
-//        }
-//        lifecycleOwner.lifecycle.addObserver(observer)
-//
-//        onDispose {
-//            lifecycleOwner.lifecycle.removeObserver(observer)
-//        }
-//    })
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    })
 
-    val mapUiSettings = remember{ MapUiSettings(zoomControlsEnabled = false) }
+    LaunchedEffect(Unit){
+        if (state.lastKnownLocation != null){
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLng(
+                    LatLng(
+                        viewModel.state.lastKnownLocation?.latitude ?: viewModel.state.parkingSpots.last().lat,
+                        viewModel.state.lastKnownLocation?.longitude ?: viewModel.state.parkingSpots.last().lat
+                    )
+                )
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -73,13 +101,8 @@ fun MapScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                locationPermissionState.launchPermissionRequest()
                 if (locationPermissionState.status.isGranted){
-                    Toast.makeText(
-                        context,
-                        "Granted",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    viewModel.getDeviceLocation(fusedLocationProviderClient)
                 } else if (locationPermissionState.status.shouldShowRationale){
                     locationPermissionState.launchPermissionRequest()
                 } else {
