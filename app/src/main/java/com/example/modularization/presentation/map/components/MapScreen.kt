@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -59,6 +60,13 @@ fun MapScreen(
     val mapUiSettings = remember{ MapUiSettings(zoomControlsEnabled = false) }
 
     Scaffold(
+        topBar = {
+            MainTopAppBar(
+                navigationIcon = Icons.Default.Menu,
+                onClickNavigation = { /*TODO*/ }
+            ) {
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 locationPermissionState.launchPermissionRequest()
