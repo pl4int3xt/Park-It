@@ -11,9 +11,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.modularization.presentation.map.MapEvent
 import com.example.modularization.presentation.map.MapScreenViewModel
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +38,27 @@ fun MapScreen(
         GoogleMap(
             properties = viewModel.state.properties,
             uiSettings = mapUiSettings,
-            onMapLongClick = {},
-        )
+            onMapLongClick = {
+                viewModel.onEvent(MapEvent.OnMapLongCLick(it))
+            },
+        ){
+            viewModel.state.parkingSpots.forEach { parkingSpot ->
+                Marker(
+                    position = LatLng(parkingSpot.lat, parkingSpot.lng),
+                    title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
+                    snippet = "Long CLick to delete",
+                    onInfoWindowClick = {
+                        viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
+                    },
+                    onClick = {
+                        it.showInfoWindow()
+                        true
+                    },
+                    icon = BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_ORANGE
+                    ),
+                )
+            }
+        }
     }
 }
