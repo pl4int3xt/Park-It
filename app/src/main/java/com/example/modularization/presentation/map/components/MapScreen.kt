@@ -244,7 +244,15 @@ fun MapScreen(
                                             }
                                         }
                                 ) {
-                                    Text(text = parkingSpot.title)
+                                    Column(
+                                        modifier = Modifier.fillMaxSize()
+                                            .padding(10.dp)
+                                        ,
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(text = parkingSpot.title)
+                                    }
                                 }
                             }
                         }
