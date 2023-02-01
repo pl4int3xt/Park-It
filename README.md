@@ -3,6 +3,10 @@
 Park it is a car parking app ,that allows you to keep track of where you have parked your car, built with Jetpack Compose. 
 The app uses room for local caching to facilitate offline support, follows the MVVM Clean Architectural pattern and Modularization
 
+# App Link
+
+https://github.com/BENJAHJP/Park-It/releases
+
 ## **Screenshots**
 
 - #### Light Mode
