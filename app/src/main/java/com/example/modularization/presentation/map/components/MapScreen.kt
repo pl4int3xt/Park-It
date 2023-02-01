@@ -79,19 +79,18 @@ fun MapScreen(
         }
     })
 
-    Log.e("-------------------", "MapScreen: ${state.lastKnownLocation?.latitude}", )
-    Log.e("-------------------", "MapScreen: ${state.lastKnownLocation?.longitude}", )
-
-    LaunchedEffect(true){
-        cameraPositionState.animate(
-            update = CameraUpdateFactory.newLatLngZoom(
-                LatLng(
-                    state.lastKnownLocation?.latitude ?: 0.0,
-                    state.lastKnownLocation?.longitude ?: 0.0
-                ),
-                8000F
+    LaunchedEffect(state.parkingSpots){
+        if (state.parkingSpots.isNotEmpty()){
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        state.parkingSpots.last().lat,
+                        state.parkingSpots.last().lng
+                    ),
+                    1000F
+                )
             )
-        )
+        }
     }
 
     Scaffold(
