@@ -4,6 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
@@ -16,8 +24,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -42,7 +54,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
+    ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class
+)
 @Composable
 fun MapScreen(
     viewModel: MapScreenViewModel = hiltViewModel(),
@@ -57,7 +71,11 @@ fun MapScreen(
     val locationPermissionState =  rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION
     )
-
+    val transitionState = remember {
+        MutableTransitionState(false).apply {
+            targetState = true
+        }
+    }
 
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver{ _, event ->
@@ -101,7 +119,7 @@ fun MapScreen(
         topBar = {
             MainTopAppBar(
                 navigationIcon = Icons.Default.Menu,
-                onClickNavigation = { /*TODO*/ }
+                onClickNavigation = { transitionState.apply { targetState = false } }
             ) {
             }
         },
@@ -134,28 +152,48 @@ fun MapScreen(
             }
         }
     ) {
-        GoogleMap(
-            cameraPositionState = cameraPositionState,
-            properties = viewModel.state.properties,
-            uiSettings = mapUiSettings,
-            onMapLongClick = {
-                viewModel.onEvent(MapEvent.OnMapLongCLick(it))
-            }
-        ){
-            viewModel.state.parkingSpots.forEach { parkingSpot ->
-                Marker(
-                    position = LatLng(parkingSpot.lat, parkingSpot.lng),
-                    title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
-                    snippet = "Long CLick to delete",
-                    onInfoWindowClick = {
-                        viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
-                    },
-                    onClick = {
-                        it.showInfoWindow()
-                        true
-                    },
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
+        Dialog(
+            onDismissRequest = {},
+            properties = DialogProperties( usePlatformDefaultWidth = false)
+        ) {
+            AnimatedVisibility(
+                visibleState = transitionState,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween()),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween()
                 )
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    GoogleMap(
+                        cameraPositionState = cameraPositionState,
+                        properties = viewModel.state.properties,
+                        uiSettings = mapUiSettings,
+                        onMapLongClick = {
+                            viewModel.onEvent(MapEvent.OnMapLongCLick(it))
+                        }
+                    ){
+                        viewModel.state.parkingSpots.forEach { parkingSpot ->
+                            Marker(
+                                position = LatLng(parkingSpot.lat, parkingSpot.lng),
+                                title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
+                                snippet = "Long CLick to delete",
+                                onInfoWindowClick = {
+                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
+                                },
+                                onClick = {
+                                    it.showInfoWindow()
+                                    true
+                                },
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
+                            )
+                        }
+                    }
+                }
             }
         }
     }
