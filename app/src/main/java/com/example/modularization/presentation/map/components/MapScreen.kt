@@ -216,7 +216,22 @@ fun MapScreen(
                         items(state.parkingSpots){ parkingSpot ->
                             Card(
                                 modifier = Modifier.height(50.dp)
+                                    .padding(10.dp)
                                     .width(50.dp)
+                                    .clickable {
+                                        scope.launch {
+                                            viewModel.dialogState = false
+                                            cameraPositionState.animate(
+                                                update = CameraUpdateFactory.newLatLngZoom(
+                                                    LatLng(
+                                                        parkingSpot.lat,
+                                                        parkingSpot.lng
+                                                    ),
+                                                    1000F
+                                                )
+                                            )
+                                        }
+                                    }
                             ) {
                                 Text(text = parkingSpot.lng.toString())
                             }
