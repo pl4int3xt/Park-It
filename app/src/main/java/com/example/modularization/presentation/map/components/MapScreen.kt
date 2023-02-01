@@ -17,10 +17,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,11 +42,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.example.domain.model.ParkingSpot
 import com.example.modularization.R
 import com.example.modularization.presentation.map.MapEvent
 import com.example.modularization.presentation.map.MapScreenViewModel
@@ -199,9 +204,16 @@ fun MapScreen(
                         .padding(20.dp)
                         .align(Alignment.Center)
                 ) {
-                    Text(text = "Parking Spots")
-                    viewModel.state.parkingSpots.forEach { parkingSpot ->
-                        Text(text = parkingSpot.lng.toString())
+                    Text(
+                        text = "Parking Spots",
+                        fontSize = 25.sp
+                    )
+                    LazyRow(){
+                        items(state.parkingSpots){ parkingSpot ->
+                            Card() {
+                                Text(text = parkingSpot.lng.toString())
+                            }
+                        }
                     }
                 }
             }
