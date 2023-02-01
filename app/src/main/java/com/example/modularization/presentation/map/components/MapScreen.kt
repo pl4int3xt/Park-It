@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -199,43 +200,51 @@ fun MapScreen(
             if (viewModel.dialogState){
                 Card(
                     modifier = Modifier
-                        .fillMaxSize(0.4f)
+                        .fillMaxHeight(0.4f)
                         .fillMaxWidth()
                         .clickable { viewModel.dialogState = false }
                         .clip(shape = RoundedCornerShape(10.dp))
                         .padding(20.dp)
-                        .align(Alignment.Center)
+                        .align(Alignment.Center),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(
-                        text = "Parking Spots",
-                        fontSize = 25.sp
-                    )
-                    LazyRow(
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        items(state.parkingSpots){ parkingSpot ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxHeight(0.6f)
-                                    .fillMaxWidth(0.5f)
-                                    .clickable {
-                                        scope.launch {
-                                            viewModel.dialogState = false
-                                            cameraPositionState.animate(
-                                                update = CameraUpdateFactory.newLatLngZoom(
-                                                    LatLng(
-                                                        parkingSpot.lat,
-                                                        parkingSpot.lng
-                                                    ),
-                                                    1000F
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Parking Spots",
+                            fontSize = 25.sp
+                        )
+                        LazyRow(
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ){
+                            items(state.parkingSpots){ parkingSpot ->
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxHeight(0.6f)
+                                        .fillMaxWidth(0.7f)
+                                        .clickable {
+                                            scope.launch {
+                                                viewModel.dialogState = false
+                                                cameraPositionState.animate(
+                                                    update = CameraUpdateFactory.newLatLngZoom(
+                                                        LatLng(
+                                                            parkingSpot.lat,
+                                                            parkingSpot.lng
+                                                        ),
+                                                        1000F
+                                                    )
                                                 )
-                                            )
+                                            }
                                         }
-                                    }
-                            ) {
-                                Text(text = parkingSpot.lng.toString())
+                                ) {
+                                    Text(text = parkingSpot.lng.toString())
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
                             }
-                            Spacer(modifier = Modifier.weight(1f))
                         }
                     }
                 }
