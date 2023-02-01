@@ -176,9 +176,9 @@ fun MapScreen(
                     )
                 }
             }
-            if (dialogState){
+            if (viewModel.dialogState){
                 Dialog(
-                    onDismissRequest = { dialogState = false },
+                    onDismissRequest = { viewModel.dialogState = false },
                     properties = DialogProperties(
                         dismissOnClickOutside = true,
                         dismissOnBackPress = true,
