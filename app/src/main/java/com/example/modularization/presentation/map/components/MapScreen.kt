@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.example.modularization.R
 import com.example.modularization.presentation.map.MapEvent
 import com.example.modularization.presentation.map.MapScreenViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -37,6 +39,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -45,6 +48,7 @@ fun MapScreen(
     viewModel: MapScreenViewModel = hiltViewModel(),
     fusedLocationProviderClient: FusedLocationProviderClient
 ) {
+    val scope = rememberCoroutineScope()
     val state = viewModel.state
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -104,7 +108,17 @@ fun MapScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 if (locationPermissionState.status.isGranted){
-                    viewModel.getDeviceLocation(fusedLocationProviderClient)
+                    scope.launch {
+                        cameraPositionState.animate(
+                            update = CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    state.lastKnownLocation?.latitude?:0.0,
+                                    state.lastKnownLocation?.longitude?:0.0
+                                ),
+                                1000F
+                            )
+                        )
+                    }
                 } else if (locationPermissionState.status.shouldShowRationale){
                     locationPermissionState.launchPermissionRequest()
                 } else {
@@ -140,9 +154,7 @@ fun MapScreen(
                         it.showInfoWindow()
                         true
                     },
-                    icon = BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_ORANGE
-                    ),
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
                 )
             }
         }
