@@ -2,6 +2,7 @@ package com.example.modularization.presentation.map.components
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -78,12 +79,15 @@ fun MapScreen(
         }
     })
 
+    Log.e("-------------------", "MapScreen: ${state.lastKnownLocation?.latitude}", )
+    Log.e("-------------------", "MapScreen: ${state.lastKnownLocation?.longitude}", )
+
     LaunchedEffect(true){
         cameraPositionState.animate(
             update = CameraUpdateFactory.newLatLngZoom(
                 LatLng(
-                    viewModel.state.lastKnownLocation?.latitude ?: 0.0,
-                    viewModel.state.lastKnownLocation?.longitude ?: 0.0
+                    state.lastKnownLocation?.latitude ?: 0.0,
+                    state.lastKnownLocation?.longitude ?: 0.0
                 ),
                 8000F
             )
