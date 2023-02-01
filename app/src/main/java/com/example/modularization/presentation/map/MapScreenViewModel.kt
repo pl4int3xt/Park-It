@@ -26,6 +26,7 @@ class MapScreenViewModel @Inject constructor(
     private val getLocationUseCase: GetLocationUseCase
 ): ViewModel() {
 
+    var
     var dialogState by mutableStateOf(false)
     var state by mutableStateOf(MapState())
 
