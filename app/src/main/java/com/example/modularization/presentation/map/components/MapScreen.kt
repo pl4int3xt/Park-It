@@ -15,6 +15,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -192,10 +193,11 @@ fun MapScreen(
                             color = Color.White,
                             shape = RoundedCornerShape(10.dp)
                         )
+                        .fillMaxWidth()
                         .clickable { viewModel.dialogState = false }
                         .clip(shape = RoundedCornerShape(10.dp))
                         .padding(20.dp)
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.Center)
                 ) {
                     Text(text = "Parking Spots")
                     viewModel.state.parkingSpots.forEach { parkingSpot ->
