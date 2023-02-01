@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -114,7 +115,10 @@ fun MapScreen(
         topBar = {
             MainTopAppBar(
                 navigationIcon = Icons.Default.Menu,
-                onClickNavigation = {  }
+                onClickNavigation = {
+                    viewModel.dialogState = true
+                    Log.e("------------", "MapScreen: ${viewModel.dialogState}", )
+                }
             ) {
             }
         },
@@ -172,9 +176,18 @@ fun MapScreen(
                     )
                 }
             }
-            if (){
-                Dialog(onDismissRequest = { /*TODO*/ }) {
-                    
+            if (dialogState){
+                Dialog(
+                    onDismissRequest = { dialogState = false },
+                    properties = DialogProperties(
+                        dismissOnClickOutside = true,
+                        dismissOnBackPress = true,
+                        usePlatformDefaultWidth = false
+                    )
+                ) {
+                    viewModel.state.parkingSpots.forEach { parkingSpot ->
+                        Text(text = parkingSpot.lng.toString())
+                    }
                 }
             }
         }
