@@ -202,8 +202,6 @@ fun MapScreen(
                     modifier = Modifier
                         .fillMaxHeight(0.4f)
                         .fillMaxWidth()
-                        .clickable { viewModel.dialogState = false }
-                        .clip(shape = RoundedCornerShape(10.dp))
                         .padding(20.dp)
                         .align(Alignment.Center),
                     colors = CardDefaults.cardColors(
