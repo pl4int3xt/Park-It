@@ -137,7 +137,7 @@ fun MapScreen(
                 } else {
                     Toast.makeText(
                         context,
-                        "Denied completely",
+                        "Permission denied completely",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
