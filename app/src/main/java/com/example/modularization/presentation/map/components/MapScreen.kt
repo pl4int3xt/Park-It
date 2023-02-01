@@ -202,7 +202,7 @@ fun MapScreen(
                             color = Color.White,
                             shape = RoundedCornerShape(10.dp)
                         )
-                        .fillMaxSize(0.2f)
+                        .fillMaxSize(0.4f)
                         .fillMaxWidth()
                         .clickable { viewModel.dialogState = false }
                         .clip(shape = RoundedCornerShape(10.dp))
