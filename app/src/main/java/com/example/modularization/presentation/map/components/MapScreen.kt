@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -168,8 +169,9 @@ fun MapScreen(
                 properties = viewModel.state.properties,
                 uiSettings = mapUiSettings,
                 onMapLongClick = {
+                    viewModel.lat = it.latitude
+                    viewModel.lng = it.longitude
                     viewModel.titleDialogState = true
-                    viewModel.onEvent(MapEvent.OnMapLongCLick(it))
                 }
             ){
                 viewModel.state.parkingSpots.forEach { parkingSpot ->
@@ -226,7 +228,7 @@ fun MapScreen(
                                     modifier = Modifier
                                         .padding(10.dp)
                                         .fillMaxHeight(1f)
-                                        .fillMaxWidth(0.7f)
+                                        .width(100.dp)
                                         .clickable {
                                             scope.launch {
                                                 viewModel.dialogState = false
@@ -292,6 +294,7 @@ fun MapScreen(
                                     contentColor = Color.Black
                                 ),
                                 onClick = {
+                                    viewModel.onEvent(MapEvent.OnProceedCLick)
                                     viewModel.titleDialogState = false
                                 }
                             ) {
