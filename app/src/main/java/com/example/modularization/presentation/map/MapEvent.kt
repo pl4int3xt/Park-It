@@ -6,5 +6,5 @@ import com.google.android.gms.maps.model.LatLng
 sealed class MapEvent {
     data class OnMapLongCLick(val latLng: LatLng): MapEvent()
     data class OnInfoWindowLongClick(val spot: ParkingSpot): MapEvent()
-    object OnGetCurrentLocationClicked: MapEvent()
+    data class OnTitleChanged(val title: String): MapEvent()
 }

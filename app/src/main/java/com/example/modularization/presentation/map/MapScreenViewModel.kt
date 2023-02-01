@@ -26,7 +26,9 @@ class MapScreenViewModel @Inject constructor(
     private val getLocationUseCase: GetLocationUseCase
 ): ViewModel() {
 
-    var
+    var isProceedClicked by mutableStateOf(false)
+    var title by mutableStateOf("")
+    var titleDialogState by mutableStateOf(false)
     var dialogState by mutableStateOf(false)
     var state by mutableStateOf(MapState())
 
@@ -67,6 +69,7 @@ class MapScreenViewModel @Inject constructor(
                 viewModelScope.launch {
                     insertLocationUseCase(
                         ParkingSpot(
+                            title = title,
                             lat = mapEvent.latLng.latitude,
                             lng = mapEvent.latLng.longitude
                         )
@@ -78,8 +81,8 @@ class MapScreenViewModel @Inject constructor(
                     deleteLocationUseCase(mapEvent.spot)
                 }
             }
-            is MapEvent.OnGetCurrentLocationClicked -> {
-
+            is MapEvent.OnTitleChanged -> {
+                title = mapEvent.title
             }
         }
     }

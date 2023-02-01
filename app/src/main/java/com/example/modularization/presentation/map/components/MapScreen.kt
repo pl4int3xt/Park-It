@@ -4,35 +4,33 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,33 +41,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.domain.model.ParkingSpot
 import com.example.modularization.R
 import com.example.modularization.presentation.map.MapEvent
 import com.example.modularization.presentation.map.MapScreenViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -138,7 +129,6 @@ fun MapScreen(
                 navigationIcon = Icons.Default.Menu,
                 onClickNavigation = {
                     viewModel.dialogState = true
-                    Log.e("------------", "MapScreen: ${viewModel.dialogState}", )
                 }
             ) {
             }
@@ -178,7 +168,7 @@ fun MapScreen(
                 properties = viewModel.state.properties,
                 uiSettings = mapUiSettings,
                 onMapLongClick = {
-
+                    viewModel.titleDialogState = true
                     viewModel.onEvent(MapEvent.OnMapLongCLick(it))
                 }
             ){
@@ -213,10 +203,21 @@ fun MapScreen(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        Text(
-                            text = "Parking Spots",
-                            fontSize = 25.sp
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Parking Spots",
+                                fontSize = 25.sp
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = { viewModel.dialogState = false }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "close")
+                            }
+                        }
                         LazyRow(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ){
@@ -241,8 +242,60 @@ fun MapScreen(
                                             }
                                         }
                                 ) {
-                                    Text(text = parkingSpot.lng.toString())
+                                    Text(text = parkingSpot.title)
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+            if (viewModel.titleDialogState){
+                Card (
+                    modifier = Modifier
+                        .fillMaxHeight(0.4f)
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                        .align(Alignment.Center),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Enter Title",
+                                fontSize = 25.sp
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = { viewModel.titleDialogState = false }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "close")
+                            }
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        OutlinedTextField(
+                            value = viewModel.title,
+                            onValueChange = { viewModel.onEvent(MapEvent.OnTitleChanged(it)) },
+                            singleLine = true
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Spacer(modifier = Modifier.weight(1f))
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Magenta,
+                                    contentColor = Color.Black
+                                ),
+                                onClick = {
+                                    viewModel.titleDialogState = false
+                                }
+                            ) {
+                                Text(text = "Proceed")
                             }
                         }
                     }
