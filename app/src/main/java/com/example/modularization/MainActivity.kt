@@ -19,35 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                viewModel.getDeviceLocation(fusedLocationProviderClient)
-            }
-        }
-
-    private fun askPermissions() = when {
-        ContextCompat.checkSelfPermission(
-            this,
-            ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED -> {
-            viewModel.getDeviceLocation(fusedLocationProviderClient)
-        }
-        else -> {
-            requestPermissionLauncher.launch(ACCESS_FINE_LOCATION)
-        }
-    }
-
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private val viewModel: MapScreenViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        askPermissions()
         setContent {
             ModularizationTheme {
                 MapScreen(

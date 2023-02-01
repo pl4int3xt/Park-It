@@ -2,9 +2,7 @@ package com.example.modularization.presentation.map.components
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,7 +38,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +50,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.example.modularization.R
 import com.example.modularization.presentation.map.MapEvent
 import com.example.modularization.presentation.map.MapScreenViewModel
+import com.example.modularization.ui.theme.Purple80
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -93,11 +91,7 @@ fun MapScreen(
                 } else if (locationPermissionState.status.shouldShowRationale){
                     locationPermissionState.launchPermissionRequest()
                 } else {
-                    Toast.makeText(
-                        context,
-                        "Denied completely",
-                        Toast.LENGTH_SHORT
-                    ).show()
+
                 }
             }
         }
@@ -175,8 +169,8 @@ fun MapScreen(
                 viewModel.state.parkingSpots.forEach { parkingSpot ->
                     Marker(
                         position = LatLng(parkingSpot.lat, parkingSpot.lng),
-                        title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
-                        snippet = "CLick here to delete",
+                        title = "Parking spot (${parkingSpot.title})",
+                        snippet = "CLick to delete",
                         onInfoWindowClick = {
                             viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
                         },
@@ -190,6 +184,10 @@ fun MapScreen(
             }
             if (viewModel.dialogState){
                 Card(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 5.dp,
+                        pressedElevation = 0.dp
+                    ),
                     modifier = Modifier
                         .fillMaxHeight(0.4f)
                         .fillMaxWidth()
@@ -243,7 +241,8 @@ fun MapScreen(
                                         }
                                 ) {
                                     Column(
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier
+                                            .fillMaxSize()
                                             .padding(10.dp)
                                         ,
                                         verticalArrangement = Arrangement.Center,
@@ -259,6 +258,10 @@ fun MapScreen(
             }
             if (viewModel.titleDialogState){
                 Card (
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 5.dp,
+                        pressedElevation = 0.dp
+                    ),
                     modifier = Modifier
                         .fillMaxHeight(0.4f)
                         .fillMaxWidth()
@@ -296,7 +299,7 @@ fun MapScreen(
                             Spacer(modifier = Modifier.weight(1f))
                             Button(
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Magenta,
+                                    containerColor = Purple80,
                                     contentColor = Color.Black
                                 ),
                                 onClick = {
