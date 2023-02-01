@@ -71,11 +71,6 @@ fun MapScreen(
     val locationPermissionState =  rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION
     )
-    val transitionState = remember {
-        MutableTransitionState(false).apply {
-            targetState = true
-        }
-    }
 
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver{ _, event ->
@@ -119,7 +114,7 @@ fun MapScreen(
         topBar = {
             MainTopAppBar(
                 navigationIcon = Icons.Default.Menu,
-                onClickNavigation = { transitionState.apply { targetState = false } }
+                onClickNavigation = {  }
             ) {
             }
         },
@@ -152,48 +147,28 @@ fun MapScreen(
             }
         }
     ) {
-        Dialog(
-            onDismissRequest = {},
-            properties = DialogProperties( usePlatformDefaultWidth = false)
-        ) {
-            AnimatedVisibility(
-                visibleState = transitionState,
-                enter = slideInVertically(
-                    initialOffsetY = { it },
-                    animationSpec = tween()),
-                exit = slideOutVertically(
-                    targetOffsetY = { it },
-                    animationSpec = tween()
+        GoogleMap(
+            cameraPositionState = cameraPositionState,
+            properties = viewModel.state.properties,
+            uiSettings = mapUiSettings,
+            onMapLongClick = {
+                viewModel.onEvent(MapEvent.OnMapLongCLick(it))
+            }
+        ){
+            viewModel.state.parkingSpots.forEach { parkingSpot ->
+                Marker(
+                    position = LatLng(parkingSpot.lat, parkingSpot.lng),
+                    title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
+                    snippet = "Long CLick to delete",
+                    onInfoWindowClick = {
+                        viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
+                    },
+                    onClick = {
+                        it.showInfoWindow()
+                        true
+                    },
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
                 )
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    GoogleMap(
-                        cameraPositionState = cameraPositionState,
-                        properties = viewModel.state.properties,
-                        uiSettings = mapUiSettings,
-                        onMapLongClick = {
-                            viewModel.onEvent(MapEvent.OnMapLongCLick(it))
-                        }
-                    ){
-                        viewModel.state.parkingSpots.forEach { parkingSpot ->
-                            Marker(
-                                position = LatLng(parkingSpot.lat, parkingSpot.lng),
-                                title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
-                                snippet = "Long CLick to delete",
-                                onInfoWindowClick = {
-                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
-                                },
-                                onClick = {
-                                    it.showInfoWindow()
-                                    true
-                                },
-                                icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
-                            )
-                        }
-                    }
-                }
             }
         }
     }
