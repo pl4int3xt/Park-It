@@ -83,10 +83,10 @@ fun MapScreen(
             cameraPositionState.animate(
                 update = CameraUpdateFactory.newLatLngZoom(
                      LatLng(
-                        viewModel.state.lastKnownLocation?.latitude ?: viewModel.state.parkingSpots.last().lat,
-                        viewModel.state.lastKnownLocation?.longitude ?: viewModel.state.parkingSpots.last().lat
+                        viewModel.state.lastKnownLocation?.latitude ?: 0.0,
+                        viewModel.state.lastKnownLocation?.longitude ?: 0.0
                     ),
-                    8000000F
+                    8000F
                 )
             )
         }
@@ -120,9 +120,7 @@ fun MapScreen(
         }
     ) {
         GoogleMap(
-            cameraPositionState = CameraPositionState(
-                cameraPositionState.position
-            ),
+            cameraPositionState = cameraPositionState,
             properties = viewModel.state.properties,
             uiSettings = mapUiSettings,
             onMapLongClick = {
