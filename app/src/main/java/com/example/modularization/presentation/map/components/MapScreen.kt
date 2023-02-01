@@ -11,6 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -185,13 +187,17 @@ fun MapScreen(
             }
             if (viewModel.dialogState){
                 Column(
-                    modifier = Modifier.background(
-                        color = Color.White.copy(alpha = 0.5F),
-                        shape = RoundedCornerShape(10.dp)
-                    )
+                    modifier = Modifier
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .clickable { viewModel.dialogState = false }
+                        .clip(shape = RoundedCornerShape(10.dp))
                         .padding(20.dp)
                         .align(Alignment.BottomCenter)
                 ) {
+                    Text(text = "Parking Spots")
                     viewModel.state.parkingSpots.forEach { parkingSpot ->
                         Text(text = parkingSpot.lng.toString())
                     }
