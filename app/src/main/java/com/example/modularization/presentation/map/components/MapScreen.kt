@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -198,10 +199,6 @@ fun MapScreen(
             if (viewModel.dialogState){
                 Card(
                     modifier = Modifier
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(10.dp)
-                        )
                         .fillMaxSize(0.4f)
                         .fillMaxWidth()
                         .clickable { viewModel.dialogState = false }
@@ -219,8 +216,8 @@ fun MapScreen(
                         items(state.parkingSpots){ parkingSpot ->
                             Card(
                                 modifier = Modifier
-                                    .height(50.dp)
-                                    .width(50.dp)
+                                    .fillMaxHeight(0.6f)
+                                    .fillMaxWidth(0.5f)
                                     .clickable {
                                         scope.launch {
                                             viewModel.dialogState = false
