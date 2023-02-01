@@ -222,7 +222,8 @@ fun MapScreen(
                             items(state.parkingSpots){ parkingSpot ->
                                 Card(
                                     modifier = Modifier
-                                        .fillMaxHeight(0.6f)
+                                        .padding(10.dp)
+                                        .fillMaxHeight(1f)
                                         .fillMaxWidth(0.7f)
                                         .clickable {
                                             scope.launch {
@@ -241,7 +242,6 @@ fun MapScreen(
                                 ) {
                                     Text(text = parkingSpot.lng.toString())
                                 }
-                                Spacer(modifier = Modifier.weight(1f))
                             }
                         }
                     }
