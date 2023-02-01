@@ -147,28 +147,35 @@ fun MapScreen(
             }
         }
     ) {
-        GoogleMap(
-            cameraPositionState = cameraPositionState,
-            properties = viewModel.state.properties,
-            uiSettings = mapUiSettings,
-            onMapLongClick = {
-                viewModel.onEvent(MapEvent.OnMapLongCLick(it))
+        Box(modifier = Modifier.fillMaxSize()) {
+            GoogleMap(
+                cameraPositionState = cameraPositionState,
+                properties = viewModel.state.properties,
+                uiSettings = mapUiSettings,
+                onMapLongClick = {
+                    viewModel.onEvent(MapEvent.OnMapLongCLick(it))
+                }
+            ){
+                viewModel.state.parkingSpots.forEach { parkingSpot ->
+                    Marker(
+                        position = LatLng(parkingSpot.lat, parkingSpot.lng),
+                        title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
+                        snippet = "Long CLick to delete",
+                        onInfoWindowClick = {
+                            viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
+                        },
+                        onClick = {
+                            it.showInfoWindow()
+                            true
+                        },
+                        icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
+                    )
+                }
             }
-        ){
-            viewModel.state.parkingSpots.forEach { parkingSpot ->
-                Marker(
-                    position = LatLng(parkingSpot.lat, parkingSpot.lng),
-                    title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
-                    snippet = "Long CLick to delete",
-                    onInfoWindowClick = {
-                        viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
-                    },
-                    onClick = {
-                        it.showInfoWindow()
-                        true
-                    },
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.location),
-                )
+            if (){
+                Dialog(onDismissRequest = { /*TODO*/ }) {
+                    
+                }
             }
         }
     }
