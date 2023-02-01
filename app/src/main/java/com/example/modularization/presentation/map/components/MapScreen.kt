@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -28,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -182,24 +184,16 @@ fun MapScreen(
                 }
             }
             if (viewModel.dialogState){
-                Dialog(
-                    onDismissRequest = { viewModel.dialogState = false },
-                    properties = DialogProperties(
-                        dismissOnClickOutside = true,
-                        dismissOnBackPress = true,
-                        usePlatformDefaultWidth = false
+                Column(
+                    modifier = Modifier.background(
+                        color = Color.White.copy(alpha = 0.5F),
+                        shape = RoundedCornerShape(10.dp)
                     )
+                        .padding(20.dp)
+                        .align(Alignment.BottomCenter)
                 ) {
-                    Column(
-                        modifier = Modifier.background(
-                            color = Color.White.copy(alpha = 0.5F),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                            .align(Ali)
-                    ) {
-                        viewModel.state.parkingSpots.forEach { parkingSpot ->
-                            Text(text = parkingSpot.lng.toString())
-                        }
+                    viewModel.state.parkingSpots.forEach { parkingSpot ->
+                        Text(text = parkingSpot.lng.toString())
                     }
                 }
             }
