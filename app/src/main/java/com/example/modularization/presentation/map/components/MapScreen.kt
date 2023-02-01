@@ -185,7 +185,7 @@ fun MapScreen(
                     Marker(
                         position = LatLng(parkingSpot.lat, parkingSpot.lng),
                         title = "Parking spot (${parkingSpot.lat}, ${parkingSpot.lng})",
-                        snippet = "Long CLick to delete",
+                        snippet = "CLick to delete",
                         onInfoWindowClick = {
                             viewModel.onEvent(MapEvent.OnInfoWindowLongClick(parkingSpot))
                         },
