@@ -79,17 +79,15 @@ fun MapScreen(
     })
 
     LaunchedEffect(true){
-        if (state.lastKnownLocation != null){
-            cameraPositionState.animate(
-                update = CameraUpdateFactory.newLatLngZoom(
-                     LatLng(
-                        viewModel.state.lastKnownLocation?.latitude ?: 0.0,
-                        viewModel.state.lastKnownLocation?.longitude ?: 0.0
-                    ),
-                    8000F
-                )
+        cameraPositionState.animate(
+            update = CameraUpdateFactory.newLatLngZoom(
+                LatLng(
+                    viewModel.state.lastKnownLocation?.latitude ?: 0.0,
+                    viewModel.state.lastKnownLocation?.longitude ?: 0.0
+                ),
+                8000F
             )
-        }
+        )
     }
 
     Scaffold(

@@ -44,13 +44,13 @@ class MapScreenViewModel @Inject constructor(
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.e("============", "getDeviceLocation: ${task.result}", )
                     state = state.copy(
                         lastKnownLocation = task.result,
                         properties = MapProperties(
                             isMyLocationEnabled = true
                         ),
                     )
+                    Log.e("--------------------------", "getDeviceLocation: ${state.lastKnownLocation?.latitude}", )
                 } else {
                 }
             }
