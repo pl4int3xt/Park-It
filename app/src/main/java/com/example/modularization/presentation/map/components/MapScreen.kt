@@ -196,12 +196,14 @@ fun MapScreen(
                 }
             }
             if (viewModel.dialogState){
-                Column(
+                Card(
                     modifier = Modifier
                         .background(
                             color = Color.White,
                             shape = RoundedCornerShape(10.dp)
                         )
+                        .fillMaxSize(0.2f)
+                        .fillMaxWidth()
                         .clickable { viewModel.dialogState = false }
                         .clip(shape = RoundedCornerShape(10.dp))
                         .padding(20.dp)
@@ -218,7 +220,6 @@ fun MapScreen(
                             Card(
                                 modifier = Modifier
                                     .height(50.dp)
-                                    .padding(10.dp)
                                     .width(50.dp)
                                     .clickable {
                                         scope.launch {
