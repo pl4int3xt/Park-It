@@ -5,12 +5,12 @@ import com.example.domain.model.ParkingSpot
 
 fun ParkingSpotEntity.toParkingSpot(): ParkingSpot {
     return ParkingSpot(
-        lat, lng, id
+        title,lat, lng, id
     )
 }
 
 fun ParkingSpot.toParkingSpotEntity(): ParkingSpotEntity {
     return ParkingSpotEntity(
-        lat, lng, id
+        title,lat, lng, id
     )
 }

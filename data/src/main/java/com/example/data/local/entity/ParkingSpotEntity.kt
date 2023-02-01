@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class ParkingSpotEntity(
+    val title: String,
     val lat: Double,
     val lng: Double,
     @PrimaryKey val id: Int? = null
